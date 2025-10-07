@@ -1,9 +1,10 @@
-# steinernet
+# SteinerNet
 
 The Steiner Tree Approach refers to a method used in graph theory and network design to find the most efficient way to connect a set of points (nodes), potentially using extra intermediate points (called Steiner points) to minimize the total connection cost.
 
+This the python eqiuivalent to SteinerNet in R. Released 10 years later on date the R version was released.
 
-## Installation
+## Installation   [PyPl Total Downloads](https://img.shields.io/pepy/dt/steinernet)
 
 To install:
 
@@ -65,6 +66,8 @@ Check the Tutorial on [tutorial file](/tutorial/steinernet_benchmark_tutorial.ip
 ## Reference
 Afshin Sadeghi and Holger Froehlich, "Steiner tree methods for optimal sub-network identification: an empirical study", BMC Bioinformatics 2013 14:144, doi:10.1186/1471-2105-14-144
 
+## License
+This project is open source under the [Apache 2.0 License](./LICENSE-2.0.txt). You basically can use it in any commercial or research project.
 
 # Citation
 To use this package in your work, cite this article as:
@@ -85,3 +88,4 @@ To use this package in your work, cite this article as:
 
 Link to [R steinerNet repository](https://github.com/afshinsadeghi/SteinerNet).
 
+For bug reports contact me at 🔗 [LinkedIn](https://www.linkedin.com/in/afshin-sadeghi)

@@ -4,9 +4,8 @@ from setuptools import setup, find_packages
 
 setup(
     name="steinernet",
-    version="0.1.0",
+    version="0.1.1",
     description="Steiner Tree Library for Python",
-    long_description="This package provides an interface for computing Steiner trees using various heuristic and exact methods",
     author="Afshin Sadeghi",
     packages=find_packages(),
     install_requires=[
