@@ -1,0 +1,15 @@
+# steinernet
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+build/
+dist/
+.ipynb_checkpoints/
+.DS_Store
+.env
+.venv
+*.egg
+*.log

@@ -1,0 +1,43 @@
+G nodes: [2, 5, 3, 4, 1, 9, 7, 0, 6, 8]
+Terminals used for benchmarking: [2, 0, 8, 4, 6]
+
+Method: SP:
+Time taken: 0.0009 seconds
+Tree size: 9.0
+Tree edges: [(2, 0, {}), (2, 8, {}), (2, 4, {}), (2, 1, {}), (0, 9, {}), (4, 3, {}), (1, 9, {}), (9, 6, {}), (9, 3, {})]
+Tree nodes: [2, 0, 8, 4, 1, 9, 6, 3]
+Method: KB:
+Time taken: 0.0017 seconds
+Tree size: 3.0
+Tree edges: [(2, 0, {'weight': 1}), (2, 4, {'weight': 1}), (2, 8, {'weight': 1})]
+Tree nodes: [2, 4, 0, 6, 8]
+Method: RSP:
+Time taken: 0.0006 seconds
+Tree size: 5.0
+Tree edges: [(4, 2, {}), (2, 8, {}), (2, 0, {}), (0, 9, {}), (9, 6, {})]
+Tree nodes: [4, 2, 8, 0, 9, 6]
+Method: SPM:
+Time taken: 0.0003 seconds
+Tree size: 7.0
+Tree edges: [(9, 6, {'weight': 1}), (9, 0, {'weight': 1}), (9, 1, {'weight': 1}), (9, 3, {'weight': 1}), (2, 1, {'weight': 1}), (2, 8, {'weight': 1}), (2, 4, {'weight': 1})]
+Tree nodes: [9, 6, 2, 1, 0, 8, 4, 3]
+Method: ASP:
+Time taken: 0.0002 seconds
+Tree size: 9.0
+Tree edges: [(2, 0, {}), (2, 8, {}), (2, 4, {}), (2, 1, {}), (0, 9, {}), (4, 3, {}), (1, 9, {}), (9, 6, {}), (9, 3, {})]
+Tree nodes: [2, 0, 8, 4, 1, 9, 6, 3]
+Method: EXA:
+Time taken: 0.0048 seconds
+Tree size: 5.0
+Tree edges: [(2, 0, {'weight': 1}), (2, 4, {'weight': 1}), (2, 8, {'weight': 1}), (9, 0, {'weight': 1}), (9, 6, {'weight': 1})]
+Tree nodes: [2, 4, 9, 0, 6, 8]
+Method: MEXA:
+Time taken: 0.0018 seconds
+Tree size: 5.0
+Tree edges: [(9, 6, {'weight': 1}), (9, 0, {'weight': 1}), (2, 4, {'weight': 1}), (2, 0, {'weight': 1}), (2, 8, {'weight': 1})]
+Tree nodes: [9, 6, 2, 4, 0, 8]
+Method: EXA+:
+Time taken: 0.0040 seconds
+Tree size: 5.0
+Tree edges: [(9, 6, {'weight': 1}), (9, 0, {'weight': 1}), (2, 4, {'weight': 1}), (2, 0, {'weight': 1}), (2, 8, {'weight': 1})]
+Tree nodes: [9, 6, 2, 4, 0, 8]
