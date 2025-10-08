@@ -4,7 +4,7 @@ The Steiner Tree Approach refers to a method used in graph theory and network de
 
 This the python eqiuivalent to SteinerNet in R. Released 10 years later on date the R version was released.
 
-## Installation   [PyPl Total Downloads](https://img.shields.io/pepy/dt/steinernet)
+## Installation   ![PyPl Total Downloads](https://img.shields.io/pepy/dt/steinernet)
 
 To install:
 
