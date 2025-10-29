@@ -42,7 +42,7 @@ terminals = [0, 2, 4]
 sn = SteinerNet(G)
 
 # Compute a Steiner tree using the random walk method
-T = sn.random_walk_tree(terminals, seed=42)
+T = sn.steinertree(terminals,'ASP', repeats=1, optimize=True)
 
 # Visualize the result
 import matplotlib.pyplot as plt
@@ -51,7 +51,7 @@ plt.show()
 ```
 
 ## Turorial
-Check the Tutorial on [tutorial file](/tutorial/steinernet_benchmark_tutorial.ipynb)
+Check the Tutorial on [tutorial file](https://github.com/afshinsadeghi/steinernetpy/blob/main/tutorial/steinernet_benchmark_tutorial.ipynb)
 
 ## Documentation
 
@@ -61,7 +61,12 @@ Check the Tutorial on [tutorial file](/tutorial/steinernet_benchmark_tutorial.ip
 - `SteinerNet.random_walk_tree(terminals, seed=None)`
     - `terminals`: list of node indices to connect
     - `seed`: (optional) random seed for reproducibility
-    - **Returns**: networkx.Graph, the approximate Steiner tree
+    - **Returns**: networkx.Graph, a random graph
+ 
+- SteinerNet.steinertree(terminals, method, repeats=1, optimize=True)
+- `terminals`: list of node indices to connect
+  - `method`: one of the methods   `SP`, `RSP`, `SPM`, `ASP`, `EXA` (see their info in the Reference paper below)  
+  - - **Returns**: an approximate Steiner tree made by the selected method 
 
 ## Reference
 Afshin Sadeghi and Holger Froehlich, "Steiner tree methods for optimal sub-network identification: an empirical study", BMC Bioinformatics 2013 14:144, doi:10.1186/1471-2105-14-144
