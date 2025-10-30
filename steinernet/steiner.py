@@ -81,7 +81,7 @@ class SteinerNet:
         """
         T = nx.Graph()
         for i, t1 in enumerate(terminals):
-            for t2 in terminals[i+1:]:
+            for j, t2 in terminals[i+1:]:
                 path = nx.shortest_path(self.G, t1, t2, weight='weight')
                 nx.add_path(T, path)
         
@@ -158,7 +158,7 @@ class SteinerNet:
         """
         edges_in_paths = set()
         for i, t1 in enumerate(terminals):
-            for t2 in enumerate(terminals[i+1:]):
+            for j, t2 in enumerate(terminals[i+1:]):
                 try:
                     path = nx.shortest_path(self.G, source=t1, target=t2, weight='weight')
                     for u, v in zip(path[:-1], path[1:]):
@@ -182,7 +182,7 @@ class SteinerNet:
         """
         T = nx.Graph()
         for i, t1 in enumerate(terminals):
-            for t2 in enumerate(terminals): #terminals[i+1:]:
+            for j, t2 in enumerate(terminals): #terminals[i+1:]:
                 path = nx.shortest_path(self.G, t1, t2, weight='weight')
                 print(f"Path between {t1} and {t2}: {path}")
                 nx.add_path(T, path)
