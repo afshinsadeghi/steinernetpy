@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "SteinerNet"
-version = "0.1.2"  # bump each release
+version = "0.1.6"  # bump each release
 description = "A SteinerTree library implementing several huristic and exact steiner methods."
 readme = "README.md"
 requires-python = ">=3.6"

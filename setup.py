@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="steinernet",
-    version="0.1.1",
+    version="0.1.6",
     description="Steiner Tree Library for Python",
     author="Afshin Sadeghi",
     packages=find_packages(),

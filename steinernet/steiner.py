@@ -82,9 +82,11 @@ class SteinerNet:
         T = nx.Graph()
         for i, t1 in enumerate(terminals):
             for j, t2 in terminals[i+1:]:
-                path = nx.shortest_path(self.G, t1, t2, weight='weight')
-                nx.add_path(T, path)
-        
+                try:
+                    path = nx.shortest_path(self.G, t1, t2, weight='weight')
+                    nx.add_path(T, path)
+                except nx.NetworkXNoPath:
+                    continue
         H = self.G.subgraph(T.nodes())
         mst = nx.minimum_spanning_tree(H, weight='weight')
         return self._prune_tree(mst, terminals)
@@ -110,7 +112,10 @@ class SteinerNet:
 
             for i in range(1, n):
                 u = order[i]
-                path = nx.shortest_path(self.G, source=order[0], target=u, weight='weight')
+                try:
+                    path = nx.shortest_path(self.G, source=order[0], target=u, weight='weight')
+                except nx.NetworkXNoPath:
+                    continue
                 for a, b in zip(path[:-1], path[1:]):
                     edge_set.add((a, b))
 
@@ -142,8 +147,11 @@ class SteinerNet:
             T = nx.Graph()
             t_perm = random.sample(terminals, len(terminals))
             for i in range(len(t_perm)-1):
-                path = nx.shortest_path(self.G, t_perm[i], t_perm[i+1], weight='weight')
-                nx.add_path(T, path)
+                try:
+                    path = nx.shortest_path(self.G, t_perm[i], t_perm[i+1], weight='weight')
+                    nx.add_path(T, path)
+                except nx.NetworkXNoPath:
+                    continue
             T = self._prune_tree(T, terminals)
             score = T.size(weight='weight')
             if score < best_score:
@@ -183,9 +191,12 @@ class SteinerNet:
         T = nx.Graph()
         for i, t1 in enumerate(terminals):
             for j, t2 in enumerate(terminals): #terminals[i+1:]:
-                path = nx.shortest_path(self.G, t1, t2, weight='weight')
-                print(f"Path between {t1} and {t2}: {path}")
-                nx.add_path(T, path)
+                try:
+                    path = nx.shortest_path(self.G, t1, t2, weight='weight')
+                    print(f"Path between {t1} and {t2}: {path}")
+                    nx.add_path(T, path)
+                except nx.NetworkXNoPath:
+                    continue
         return T
 
     def _exact_algorithm(self, terminals, union = False):
