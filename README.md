@@ -91,7 +91,7 @@ To use this package in your work, cite this article as:
 ```
 
 
-Link to [R steinerNet repository](https://github.com/afshinsadeghi/SteinerNet).
+Link to [R steinerNet repository](https://github.com/afshinsadeghi/SteinerNet).  
 Link to [Python SteinerNet repository](https://github.com/afshinsadeghi/steinernetpy).
 
 For bug reports contact me at 🔗 [LinkedIn](https://www.linkedin.com/in/afshin-sadeghi)
