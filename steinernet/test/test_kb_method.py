@@ -1,7 +1,7 @@
 import networkx as nx
 import random
-from steiner import SteinerNet
-from random_walk_subgraph import random_walk_tree
+from steinernet.steiner import SteinerNet
+from steinernet.random_walk_subgraph import random_walk_tree
 
 # Create a base graph
 base_graph = nx.complete_graph(10)

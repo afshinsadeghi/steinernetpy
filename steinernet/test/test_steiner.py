@@ -1,7 +1,3 @@
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 import networkx as nx
 import random
 import matplotlib.pyplot as plt
@@ -9,9 +5,8 @@ import time
 import pandas as pd
 import seaborn as sns
 from scipy.stats import wilcoxon
-from steiner import SteinerNet
-#from steinernet.random_walk_subgraph import random_walk_subgraph
-from random_walk_subgraph import random_walk_subgraph
+from steinernet.steiner import SteinerNet
+from steinernet.random_walk_subgraph import random_walk_tree as random_walk_subgraph
 
 # Base graph
 

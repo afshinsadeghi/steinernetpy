@@ -3,8 +3,8 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "SteinerNet"
-version = "0.1.6"  # bump each release
+name = "steinernet"
+version = "0.1.8"  # bump each release
 description = "A SteinerTree library implementing several huristic and exact steiner methods."
 readme = "README.md"
 requires-python = ">=3.6"
@@ -15,10 +15,8 @@ dependencies = [
 ]
 
 [project.scripts]
-SteinerNet = "steiner.SteinerNet:main"
+steinernet = "steiner.SteinerNet:main"
 
 [tool.setuptools]
-package-dir = {"" = "steinernet"}
-
-[tool.setuptools.packages.find]
-where = ["steinernet"]
+packages = ["steinernet"]
+include-package-data = true
