@@ -28,6 +28,8 @@ Methods:
 import networkx as nx
 import random
 import itertools
+import multiprocessing
+from functools import partial
 from .random_walk_subgraph import random_walk_subgraph
 
 class SteinerNet:
@@ -38,14 +40,29 @@ class SteinerNet:
         """
         self.G = G.copy()
 
-    def steinertree(self, terminals, method='SP', repeats=70, optimize=True):
+    def steinertree(self, terminals, method='SP', repeats=70, optimize=True, parallel=True, n_processes=None):
         """
         Unified interface to run one of several Steiner tree methods.
-        :param terminals: List of terminal nodes
-        :param method: String code for algorithm ('SP', 'KB', etc.)
-        :param repeats: Number of repeats (for stochastic methods)
-        :param optimize: Whether to prune extra nodes (only applies to some methods)
-        :return: networkx.Graph (Steiner tree or approximation)
+        
+        Parameters:
+        -----------
+        terminals : list
+            List of terminal nodes
+        method : str, optional
+            String code for algorithm ('SP', 'KB', etc.) (default: 'SP')
+        repeats : int, optional
+            Number of repeats for stochastic methods (default: 70)
+        optimize : bool, optional
+            Whether to prune extra nodes (only applies to some methods) (default: True)
+        parallel : bool, optional
+            Whether to use parallel processing for applicable methods (default: True)
+        n_processes : int, optional
+            Number of processes to use for parallel processing (default: None, which uses all available cores)
+            
+        Returns:
+        --------
+        networkx.Graph
+            Steiner tree or approximation
         """
         method = method.upper()
         if method == 'SP':
@@ -59,11 +76,11 @@ class SteinerNet:
         elif method == 'ASP':
             return self._all_shortest_paths_union(terminals)
         elif method == 'EXA':
-            return self._exact_algorithm(terminals)
+            return self._exact_algorithm(terminals, parallel=parallel, n_processes=n_processes)
         elif method == 'MEXA':
-            return self._exact_algorithm(terminals,union=True)
+            return self._exact_algorithm(terminals, union=True, parallel=parallel, n_processes=n_processes)
         elif method == 'EXA+':
-            return self._exact_algorithm_union_with_neighbour_explore(terminals)
+            return self._exact_algorithm_union_with_neighbour_explore(terminals, parallel=parallel, n_processes=n_processes)
         elif method == 'RW':
             return self._random_walk(terminals)
         else:
@@ -184,7 +201,7 @@ class SteinerNet:
 
         return nx.minimum_spanning_tree(H, weight='weight')
 
-    def _all_shortest_paths_union(self, terminals):
+    def _all_shortest_paths_union(self, terminals, log = False):
         """
         Union of all shortest paths among terminals (non-pruned). [Ref 4]
         """
@@ -193,36 +210,92 @@ class SteinerNet:
             for j, t2 in enumerate(terminals): #terminals[i+1:]:
                 try:
                     path = nx.shortest_path(self.G, t1, t2, weight='weight')
-                    print(f"Path between {t1} and {t2}: {path}")
+                    if log == True:
+                        print(f"Path between {t1} and {t2}: {path}")
                     nx.add_path(T, path)
                 except nx.NetworkXNoPath:
                     continue
         return T
 
-    def _exact_algorithm(self, terminals, union = False):
+    def _process_subset(self, terminals, subset):
         """
-        find Steiner trees, the Exact bruteforce method (mirrors R's SteinerExact):
+        Process a single subset of non-terminals.
+        Helper function for parallel execution in _exact_algorithm.
+        """
+        nodes_subset = set(terminals) | set(subset)
+        subG = self.G.subgraph(nodes_subset)
+        if nx.is_connected(subG):
+            T = nx.minimum_spanning_tree(subG, weight='weight')
+            cost = T.size(weight='weight')
+            return (cost, T)
+        return (float('inf'), None)
+
+    def _exact_algorithm(self, terminals, union=False, parallel=True, n_processes=None):
+        """
+        Find Steiner trees, the Exact bruteforce method (mirrors R's SteinerExact):
         - Finds MSTs over all subsets of non-terminals
         - Collects *all* trees with minimal weight
-        Returns: list of networkx.Graph
+        
+        Parameters:
+        -----------
+        terminals : list
+            List of terminal nodes
+        union : bool, optional
+            Whether to return the union of all optimal trees (default: False)
+        parallel : bool, optional
+            Whether to use parallel processing (default: True)
+        n_processes : int, optional
+            Number of processes to use (default: None, which uses all available cores)
+            
+        Returns:
+        --------
+        networkx.Graph or list of networkx.Graph
         """
         optimal_trees = []
         best_cost = float('inf')
         non_terminals = [n for n in self.G.nodes() if n not in terminals]
+        
+        if not parallel:
+            # Original sequential implementation
+            for r in range(len(non_terminals) + 1):
+                for subset in itertools.combinations(non_terminals, r):
+                    nodes_subset = set(terminals) | set(subset)
+                    subG = self.G.subgraph(nodes_subset)
+                    if nx.is_connected(subG):
+                        T = nx.minimum_spanning_tree(subG, weight='weight')
+                        cost = T.size(weight='weight')
+                        if cost < best_cost:
+                            best_cost = cost
+                            optimal_trees = [T]
+                        elif abs(cost - best_cost) < 1e-9:
+                            optimal_trees.append(T)
+        else:
+            # Parallel implementation
+            if n_processes is None:
+                n_processes = multiprocessing.cpu_count()
+                
+            # Create a pool of workers
+            with multiprocessing.Pool(processes=n_processes) as pool:
+                process_subset_partial = partial(self._process_subset, terminals)
+                
+                # Process all subsets in parallel
+                for r in range(len(non_terminals) + 1):
+                    all_subsets = list(itertools.combinations(non_terminals, r))
+                    results = pool.map(process_subset_partial, all_subsets)
+                    
+                    # Process results
+                    for cost, tree in results:
+                        if tree is None:
+                            continue
+                        if cost < best_cost:
+                            best_cost = cost
+                            optimal_trees = [tree]
+                        elif abs(cost - best_cost) < 1e-9:
+                            optimal_trees.append(tree)
 
-        for r in range(len(non_terminals) + 1):
-            for subset in itertools.combinations(non_terminals, r):
-                nodes_subset = set(terminals) | set(subset)
-                subG = self.G.subgraph(nodes_subset)
-                if nx.is_connected(subG):
-                    T = nx.minimum_spanning_tree(subG, weight='weight')
-                    cost = T.size(weight='weight')
-                    if cost < best_cost:
-                        best_cost = cost
-                        optimal_trees = [T]
-                    elif abs(cost - best_cost) < 1e-9:
-                        optimal_trees.append(T)
-
+        if not optimal_trees:
+            return None
+            
         if union is False:
             return optimal_trees[0] 
         else:
@@ -240,16 +313,48 @@ class SteinerNet:
             return merged_graph
 
 
-    def _exact_algorithm_union_with_neighbour_explore(self, terminals, hops=2):
+    def _process_subset_with_cost(self, terminals, best_cost, subset):
+        """
+        Process a single subset of non-terminals for _exact_algorithm_union_with_neighbour_explore.
+        Helper function for parallel execution.
+        """
+        nodes = list(terminals) + list(subset)
+        subG = self.G.subgraph(nodes)
+        if nx.is_connected(subG):
+            T = nx.minimum_spanning_tree(subG, weight='weight')
+            cost = T.size(weight='weight')
+            if abs(cost - best_cost) < 1e-9 or cost < best_cost:  # Equal or better
+                return (cost, T)
+        return (float('inf'), None)
+
+    def _exact_algorithm_union_with_neighbour_explore(self, terminals, hops=2, parallel=True, n_processes=None):
         """
         Find union of exact Steiner trees with local neighborhood expansion. [New]
         Adds nodes up to `hops` away from base tree and merges MSTs with same cost.
+        
+        Parameters:
+        -----------
+        terminals : list
+            List of terminal nodes
+        hops : int, optional
+            Number of hops to explore from base tree (default: 2)
+        parallel : bool, optional
+            Whether to use parallel processing (default: True)
+        n_processes : int, optional
+            Number of processes to use (default: None, which uses all available cores)
+            
+        Returns:
+        --------
+        networkx.Graph
+            Union of optimal Steiner trees
         """
-        base_tree = self._exact_algorithm(terminals)
+        # Get the base tree using the exact algorithm (which can also be parallelized)
+        base_tree = self._exact_algorithm(terminals, parallel=parallel, n_processes=n_processes)
         if base_tree is None:
             return None
         best_cost = base_tree.size(weight='weight')
 
+        # Find candidate nodes within 'hops' distance
         nodes_in_tree = list(base_tree.nodes())
         candidate_nodes = set(nodes_in_tree)
         for node in nodes_in_tree:
@@ -258,21 +363,46 @@ class SteinerNet:
 
         merged_edges = set(base_tree.edges(data='weight'))
         non_terminals = [n for n in candidate_nodes if n not in terminals]
+        
+        if not parallel:
+            # Original sequential implementation
+            for r in range(len(non_terminals) + 1):
+                for subset in itertools.combinations(non_terminals, r):
+                    nodes = list(terminals) + list(subset)
+                    subG = self.G.subgraph(nodes)
+                    if nx.is_connected(subG):
+                        T = nx.minimum_spanning_tree(subG, weight='weight')
+                        cost = T.size(weight='weight')
+                        if abs(cost - best_cost) < 1e-9:  # Equal cost (avoid floating point issues)
+                            merged_edges.update(T.edges(data='weight'))
+                        if cost < best_cost:  # Better cost
+                            best_cost = cost
+                            merged_edges = set(T.edges(data='weight'))
+        else:
+            # Parallel implementation
+            if n_processes is None:
+                n_processes = multiprocessing.cpu_count()
+                
+            # Create a pool of workers
+            with multiprocessing.Pool(processes=n_processes) as pool:
+                process_subset_partial = partial(self._process_subset_with_cost, terminals, best_cost)
+                
+                # Process all subsets in parallel
+                for r in range(len(non_terminals) + 1):
+                    all_subsets = list(itertools.combinations(non_terminals, r))
+                    results = pool.map(process_subset_partial, all_subsets)
+                    
+                    # Process results
+                    for cost, tree in results:
+                        if tree is None:
+                            continue
+                        if abs(cost - best_cost) < 1e-9:  # Equal cost
+                            merged_edges.update(tree.edges(data='weight'))
+                        if cost < best_cost:  # Better cost
+                            best_cost = cost
+                            merged_edges = set(tree.edges(data='weight'))
 
-        for r in range(len(non_terminals) + 1):
-            for subset in itertools.combinations(non_terminals, r):
-                nodes = list(terminals) + list(subset)
-                subG = self.G.subgraph(nodes)
-                if nx.is_connected(subG):
-                    T = nx.minimum_spanning_tree(subG, weight='weight')
-                    cost = T.size(weight='weight')
-                    #if cost == best_cost:
-                    if abs(cost - best_cost) < 1e-9: # to avoid floating point issues
-                        merged_edges.update(T.edges(data='weight'))
-                    if cost < best_cost:
-                        best_cost = cost
-                        merged_edges = set(T.edges(data='weight'))
-
+        # Create the merged graph
         merged_graph = nx.Graph()
         for u, v, w in merged_edges:
             merged_graph.add_edge(u, v, weight=w)

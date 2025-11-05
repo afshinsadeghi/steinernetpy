@@ -3,7 +3,6 @@ import random
 import matplotlib.pyplot as plt
 import time
 import pandas as pd
-import seaborn as sns
 from scipy.stats import wilcoxon
 from steinernet.steiner import SteinerNet
 from steinernet.random_walk_subgraph import random_walk_tree as random_walk_subgraph

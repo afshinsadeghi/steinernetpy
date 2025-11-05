@@ -68,6 +68,8 @@ Check the Tutorial on [tutorial file](https://github.com/afshinsadeghi/steinerne
   - `method`: one of the methods   `SP`, `RSP`, `SPM`, `ASP`, `EXA` (see their info in the Reference paper below)  
   - - **Returns**: an approximate Steiner tree made by the selected method 
 
+Readme file for parralel running of the exact algorithm exists in [README_PARALLEL](./README_PARALLEL.md)
+
 ## Reference
 Afshin Sadeghi and Holger Froehlich, "Steiner tree methods for optimal sub-network identification: an empirical study", BMC Bioinformatics 2013 14:144, doi:10.1186/1471-2105-14-144
 
