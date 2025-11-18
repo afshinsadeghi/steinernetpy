@@ -41,7 +41,7 @@ terminals = [0, 2, 4]
 # Initialize SteinerNet
 sn = SteinerNet(G)
 
-# Compute a Steiner tree using the random walk method
+# Compute a Steiner tree subgraph based on all shortest paths method
 T = sn.steinertree(terminals,'ASP', repeats=1, optimize=True)
 
 # Visualize the result
