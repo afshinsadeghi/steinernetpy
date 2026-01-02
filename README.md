@@ -81,6 +81,20 @@ This project is open source under the [Apache 2.0 License](./LICENSE-2.0.txt). Y
 # Citation
 To use this package in your work, cite this article as:
 
+
+```
+@software{sadeghi2025steinernetpy,
+  author       = {Sadeghi, Afshin},
+  title        = {steinernetpy: a Python package that implements the Steiner Tree Approach to find the most efficient way to connect a set of points (nodes).},
+  year         = {2025},
+  version      = {v1.0.0},
+  doi          = {10.5281/zenodo.18133885},
+  url          = {https://github.com/afshinsadeghi/steinernetpy}
+}
+```
+
+To use the suggested algorithms, all Steiner trees and randomized Steiner trees in your work, cite this article as:
+
 ```
 @article{sadeghi2013steiner,
   title={Steiner tree methods for optimal sub-network identification: an empirical study},
