@@ -2,7 +2,7 @@
 
 The Steiner Tree Approach refers to a method used in graph theory and network design to find the most efficient way to connect a set of points (nodes), potentially using extra intermediate points (called Steiner points) to minimize the total connection cost.
 
-This the python eqiuivalent to SteinerNet in R. Released 10 years later on date the R version was released.
+This is the python eqiuivalent to SteinerNet in R. Released 10 years later on date the R version was released.
 
 ## Installation   ![PyPl Total Downloads](https://img.shields.io/pepy/dt/steinernet)
 
